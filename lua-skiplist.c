@@ -50,31 +50,76 @@ _get_rank(lua_State *L) {
     luaL_checktype(L, 3, LUA_TSTRING);
     slobj obj;
     obj.ptr = lua_tolstring(L, 3, &obj.length);
-    lua_pushunsigned(L, slGetRank(sl, score, &obj));
-    return 1;
-}
 
-static int
-_get_member_by_rank(lua_State *L) {
-    skiplist *sl = _to_skiplist(L);
-    unsigned long rank = luaL_checkunsigned(L, 2);
-    skiplistNode* node = slGetNodeByRank(sl, rank);
-    if(node == NULL || node->obj == NULL) {
+    unsigned long rank = slGetRank(sl, score, &obj);
+    if(rank == 0) {
         return 0;
     }
 
-    lua_pushlstring(L, node->obj->ptr, node->obj->length);
+    lua_pushunsigned(L, rank);
+
     return 1;
 }
 
 static int
 _get_rank_range(lua_State *L) {
-    return 0;
+    skiplist *sl = _to_skiplist(L);
+    unsigned long r1 = luaL_checkunsigned(L, 2);
+    unsigned long r2 = luaL_checkunsigned(L, 3);
+    int reverse, rangelen;
+    if(r1 <= r2) {
+        reverse = 0;
+        rangelen = r2 - r1 + 1;
+    } else {
+        reverse = 1;
+        rangelen = r1 - r2 + 1;
+    }
+
+    skiplistNode* node = slGetNodeByRank(sl, r1);
+    lua_createtable(L, rangelen, 0);
+    int n = 0;
+    while(node && n < rangelen) {
+        n++;
+
+        lua_pushlstring(L, node->obj->ptr, node->obj->length);
+        lua_rawseti(L, -2, n);
+        node = reverse? node->backward : node->level[0].forward;
+    } 
+    return 1;
 }
 
 static int
 _get_score_range(lua_State *L) {
-    return 0;
+    skiplist *sl = _to_skiplist(L);
+    double s1 = luaL_checknumber(L, 2);
+    double s2 = luaL_checknumber(L, 3);
+    int reverse; 
+    skiplistNode *node;
+
+    if(s1 <= s2) {
+        reverse = 0;
+        node = slFirstInRange(sl, s1, s2);
+    } else {
+        reverse = 1;
+        node = slLastInRange(sl, s2, s1);
+    }
+
+    lua_newtable(L);
+    int n = 0;
+    while(node) {
+        if(reverse) {
+            if(node->score < s2) break;
+        } else {
+            if(node->score > s2) break;
+        }
+        n++;
+
+        lua_pushlstring(L, node->obj->ptr, node->obj->length);
+        lua_rawseti(L, -2, n);
+
+        node = reverse? node->backward:node->level[0].forward;
+    }
+    return 1;
 }
 
 static int
@@ -113,7 +158,6 @@ int luaopen_skiplist_c(lua_State *L) {
         {"get_rank", _get_rank},
         {"get_rank_range", _get_rank_range},
         {"get_score_range", _get_score_range},
-        {"get_member_by_rank", _get_member_by_rank},
 
         {"dump", _dump},
     };

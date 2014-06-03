@@ -215,6 +215,10 @@ unsigned long slGetRank(skiplist *sl, double score, slobj *o) {
 
 /* Finds an element by its rank. The rank argument needs to be 1-based. */
 skiplistNode* slGetNodeByRank(skiplist *sl, unsigned long rank) {
+    if(rank == 0 || rank > sl->length) {
+        return NULL;
+    }
+
     skiplistNode *x;
     unsigned long traversed = 0;
     int i;
@@ -230,6 +234,7 @@ skiplistNode* slGetNodeByRank(skiplist *sl, unsigned long rank) {
             return x;
         }
     }
+
     return NULL;
 }
 
@@ -243,8 +248,9 @@ int slIsInRange(skiplist *sl, double min, double max) {
         return 0;
     }
     x = sl->tail;
-    if (x == NULL || x->score > min)
+    if (x == NULL || x->score < min)
         return 0;
+
     x = sl->header->level[0].forward;
     if (x == NULL || x->score > max)
         return 0;
@@ -285,7 +291,7 @@ skiplistNode *slLastInRange(skiplist *sl, double min, double max) {
     for (i = sl->level-1; i >= 0; i--) {
         /* Go forward while *IN* range. */
         while (x->level[i].forward &&
-            x->level[i].forward->score < max)
+            x->level[i].forward->score <= max)
                 x = x->level[i].forward;
     }
 

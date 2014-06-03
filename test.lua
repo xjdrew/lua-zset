@@ -1,14 +1,44 @@
-local c = require "skiplist.c"
+local zset = require "zset"
 
-local sl = c()
+local total = 100
+local all = {}
+for i=1, total do
+    all[#all + 1] = i
+end
 
-sl:insert(100, "a")
-sl:insert(200, "b")
-sl:insert(150, "c")
+local function random_choose(t)
+    if #t == 0 then
+        return
+    end
+    local i = math.random(#t)
+    return table.remove(t, i)
+end
 
-sl:dump()
+local zs = zset.new()
 
-print(sl:get_rank(100, "a"))
-print(sl:get_rank(100, "b"))
-print(sl:get_member_by_rank(3))
+while true do
+    local score = random_choose(all)
+    if not score then
+        break
+    end
+    local name = "a" .. score
+    zs:add(score, name)
+end
+
+assert(total == zs:count())
+
+print("rank 28:", zs:rank("a28"))
+print("rev rank 28:", zs:rev_rank("a28"))
+
+local t = zs:range(1, 10)
+print("rank 1-10:")
+for _, name in ipairs(t) do
+    print(name)
+end
+
+local t = zs:rev_range(1, 10)
+print("rev rank 1-10:")
+for _, name in ipairs(t) do
+    print(name)
+end
 
