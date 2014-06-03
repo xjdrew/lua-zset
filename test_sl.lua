@@ -65,3 +65,8 @@ end
 dump_score_range(sl, 10, 15)
 dump_score_range(sl, 15, 10)
 
+print(collectgarbage("count"))
+sl = nil
+collectgarbage("collect")
+print(collectgarbage("count"))
+

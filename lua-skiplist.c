@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "lua.h"
@@ -143,6 +144,7 @@ _new(lua_State *L) {
 static int
 _release(lua_State *L) {
     skiplist *sl = _to_skiplist(L);
+    printf("collect sl:%p\n", sl);
     slFree(sl);
     return 0;
 }
