@@ -1,3 +1,8 @@
+/*
+ *  author: xjdrew
+ *  date: 2014-06-03 20:38
+ */
+
 // skiplist similar with the version in redis
 #include <stdio.h>
 #include <stdlib.h>

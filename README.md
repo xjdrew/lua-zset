@@ -1,5 +1,5 @@
-## 说明
-skiplist的实现基本是从redis源码里面抠出来的, 只有几个接口的约定不太一致
+## zset
+lua的sorted set实现， 其中skiplist的实现基本是从redis源码里面抠出来的, 只有几个接口的约定不太一致。
 
 ## build & test 
 ```
