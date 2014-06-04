@@ -167,6 +167,7 @@ int luaopen_skiplist_c(lua_State *L) {
         {"get_score_range", _get_score_range},
 
         {"dump", _dump},
+        {NULL, NULL}
     };
 
     lua_createtable(L, 0, 2);
