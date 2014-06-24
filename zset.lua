@@ -31,10 +31,31 @@ function mt:_reverse_rank(r)
     return self.sl:get_count() - r + 1
 end
 
+function mt:limit(count)
+    local total = self.sl:get_count()
+    if total <= count then
+        return 0
+    end
+    return self.sl:delete_by_rank(count+1, total, function (member)
+        self.tbl[member] = nil
+    end)
+end
+
+function mt:rev_limit(count)
+    local total = self.sl:get_count()
+    if total <= count then
+        return 0
+    end
+    local from = self:_reverse_rank(count+1)
+    local to   = self:_reverse_rank(total)
+    return self.sl:delete_by_rank(from, to, function (member)
+        self.tbl[member] = nil
+    end)
+end
+
 function mt:rev_range(r1, r2)
     local r1 = self:_reverse_rank(r1)
     local r2 = self:_reverse_rank(r2)
-    print(r1, r2)
     return self:range(r1, r2)
 end
 
@@ -71,6 +92,10 @@ end
 
 function mt:score(member)
     return self.tbl[member]
+end
+
+function mt:dump()
+    self.sl:dump()
 end
 
 local M = {}

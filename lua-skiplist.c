@@ -42,6 +42,30 @@ _delete(lua_State *L) {
     return 1;
 }
 
+static void
+_delete_rank_cb(void* ud, slobj *obj) {
+    lua_State *L = (lua_State*)ud;
+    lua_pushvalue(L, 4);
+    lua_pushlstring(L, obj->ptr, obj->length);
+    lua_call(L, 1, 0);
+}
+
+static int
+_delete_by_rank(lua_State *L) {
+    skiplist *sl = _to_skiplist(L);
+    unsigned int start = luaL_checkunsigned(L, 2);
+    unsigned int end = luaL_checkunsigned(L, 3);
+    luaL_checktype(L, 4, LUA_TFUNCTION);
+    if (start > end) {
+        unsigned int tmp = start;
+        start = end;
+        end = tmp;
+    }
+
+    lua_pushunsigned(L, slDeleteByRank(sl, start, end, _delete_rank_cb, L));
+    return 1;
+}
+
 static int
 _get_count(lua_State *L) {
     skiplist *sl = _to_skiplist(L);
@@ -160,6 +184,7 @@ int luaopen_skiplist_c(lua_State *L) {
     luaL_Reg l[] = {
         {"insert", _insert},
         {"delete", _delete},
+        {"delete_by_rank", _delete_by_rank},
 
         {"get_count", _get_count},
         {"get_rank", _get_rank},

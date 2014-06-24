@@ -25,6 +25,7 @@ typedef struct skiplist {
     int level;
 } skiplist;
 
+typedef void (*slDeleteCb) (void *ud, slobj *obj);
 slobj* slCreateObj(const char* ptr, size_t length);
 void slFreeObj(slobj *obj);
 
@@ -34,6 +35,8 @@ void slDump(skiplist *sl);
 
 void slInsert(skiplist *sl, double score, slobj *obj);
 int slDelete(skiplist *sl, double score, slobj *obj);
+unsigned long slDeleteByRank(skiplist *sl, unsigned int start, unsigned int end, slDeleteCb cb, void* ud);
+
 unsigned long slGetRank(skiplist *sl, double score, slobj *o);
 skiplistNode* slGetNodeByRank(skiplist *sl, unsigned long rank);
 

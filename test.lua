@@ -42,3 +42,13 @@ for _, name in ipairs(t) do
     print(name)
 end
 
+print("------------------ dump ------------------")
+zs:dump()
+
+print("------------------ dump after limit 10 ------------------")
+zs:limit(10)
+zs:dump()
+
+print("------------------ dump after rev limit 5 ------------------")
+zs:rev_limit(5)
+zs:dump()

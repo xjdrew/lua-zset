@@ -2,7 +2,7 @@ local c = require "skiplist.c"
 
 local sl = c()
 
-local total = 100000
+local total = 500000
 for i=1, total do
     sl:insert(i, tostring(i))
     sl:insert(i, tostring(i))
@@ -64,6 +64,11 @@ end
 
 dump_score_range(sl, 10, 15)
 dump_score_range(sl, 15, 10)
+
+function delete_cb(member)
+    print("delete:", member)
+end
+sl:delete_by_rank(15, 10, delete_cb)
 
 print(collectgarbage("count"))
 sl = nil

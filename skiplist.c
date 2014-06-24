@@ -190,6 +190,35 @@ int slDelete(skiplist *sl, double score, slobj *obj) {
     return 0; /* not found */
 }
 
+/* Delete all the elements with rank between start and end from the skiplist.
+ * Start and end are inclusive. Note that start and end need to be 1-based */
+unsigned long slDeleteByRank(skiplist *sl, unsigned int start, unsigned int end, slDeleteCb cb, void* ud) {
+    skiplistNode *update[SKIPLIST_MAXLEVEL], *x;
+    unsigned long traversed = 0, removed = 0;
+    int i;
+
+    x = sl->header;
+    for (i = sl->level-1; i >= 0; i--) {
+        while (x->level[i].forward && (traversed + x->level[i].span) < start) {
+            traversed += x->level[i].span;
+            x = x->level[i].forward;
+        }
+        update[i] = x;
+    }
+
+    traversed++;
+    x = x->level[0].forward;
+    while (x && traversed <= end) {
+        skiplistNode *next = x->level[0].forward;
+        slDeleteNode(sl,x,update);
+        cb(ud, x->obj);
+        slFreeNode(x);
+        removed++;
+        traversed++;
+        x = next;
+    }
+    return removed;
+}
 
 /* Find the rank for an element by both score and key.
  * Returns 0 when the element cannot be found, rank otherwise.
