@@ -20,6 +20,7 @@ function mt:rem(member)
     local score = self.tbl[member]
     if score then
         self.sl:delete(score, member)
+        self.tbl[member] = nil
     end
 end
 
