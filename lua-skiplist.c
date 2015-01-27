@@ -37,7 +37,7 @@ _delete(lua_State *L) {
     double score = luaL_checknumber(L, 2);
     luaL_checktype(L, 3, LUA_TSTRING);
     slobj obj;
-    obj.ptr = lua_tolstring(L, 3, &obj.length);
+    obj.ptr = (char *)lua_tolstring(L, 3, &obj.length);
     lua_pushboolean(L, slDelete(sl, score, &obj));
     return 1;
 }
@@ -79,7 +79,7 @@ _get_rank(lua_State *L) {
     double score = luaL_checknumber(L, 2);
     luaL_checktype(L, 3, LUA_TSTRING);
     slobj obj;
-    obj.ptr = lua_tolstring(L, 3, &obj.length);
+    obj.ptr = (char *)lua_tolstring(L, 3, &obj.length);
 
     unsigned long rank = slGetRank(sl, score, &obj);
     if(rank == 0) {
