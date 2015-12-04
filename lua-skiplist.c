@@ -53,8 +53,8 @@ _delete_rank_cb(void* ud, slobj *obj) {
 static int
 _delete_by_rank(lua_State *L) {
     skiplist *sl = _to_skiplist(L);
-    unsigned int start = luaL_checkunsigned(L, 2);
-    unsigned int end = luaL_checkunsigned(L, 3);
+    unsigned int start = luaL_checkinteger(L, 2);
+    unsigned int end = luaL_checkinteger(L, 3);
     luaL_checktype(L, 4, LUA_TFUNCTION);
     if (start > end) {
         unsigned int tmp = start;
@@ -62,14 +62,14 @@ _delete_by_rank(lua_State *L) {
         end = tmp;
     }
 
-    lua_pushunsigned(L, slDeleteByRank(sl, start, end, _delete_rank_cb, L));
+    lua_pushnumber(L, slDeleteByRank(sl, start, end, _delete_rank_cb, L));
     return 1;
 }
 
 static int
 _get_count(lua_State *L) {
     skiplist *sl = _to_skiplist(L);
-    lua_pushunsigned(L, sl->length);
+    lua_pushnumber(L, sl->length);
     return 1;
 }
 
@@ -86,7 +86,7 @@ _get_rank(lua_State *L) {
         return 0;
     }
 
-    lua_pushunsigned(L, rank);
+    lua_pushnumber(L, rank);
 
     return 1;
 }
@@ -94,8 +94,8 @@ _get_rank(lua_State *L) {
 static int
 _get_rank_range(lua_State *L) {
     skiplist *sl = _to_skiplist(L);
-    unsigned long r1 = luaL_checkunsigned(L, 2);
-    unsigned long r2 = luaL_checkunsigned(L, 3);
+    unsigned long r1 = luaL_checkinteger(L, 2);
+    unsigned long r2 = luaL_checkinteger(L, 3);
     int reverse, rangelen;
     if(r1 <= r2) {
         reverse = 0;
