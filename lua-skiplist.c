@@ -62,14 +62,14 @@ _delete_by_rank(lua_State *L) {
         end = tmp;
     }
 
-    lua_pushnumber(L, slDeleteByRank(sl, start, end, _delete_rank_cb, L));
+    lua_pushinteger(L, slDeleteByRank(sl, start, end, _delete_rank_cb, L));
     return 1;
 }
 
 static int
 _get_count(lua_State *L) {
     skiplist *sl = _to_skiplist(L);
-    lua_pushnumber(L, sl->length);
+    lua_pushinteger(L, sl->length);
     return 1;
 }
 
@@ -86,7 +86,7 @@ _get_rank(lua_State *L) {
         return 0;
     }
 
-    lua_pushnumber(L, rank);
+    lua_pushinteger(L, rank);
 
     return 1;
 }
