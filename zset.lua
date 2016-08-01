@@ -56,7 +56,13 @@ end
 
 function mt:rev_range(r1, r2)
     local r1 = self:_reverse_rank(r1)
+    if r1 < 1 then
+        return {}
+    end
     local r2 = self:_reverse_rank(r2)
+    if r2 < 1 then
+        r2 = 1
+    end
     return self:range(r1, r2)
 end
 
