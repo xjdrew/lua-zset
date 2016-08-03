@@ -62,11 +62,11 @@ end
 
 function mt:range(r1, r2)
     if r1 < 1 then
-        r1 = 1
+        r1 = 0
     end
 
     if r2 < 1 then
-        r2 = 1
+        r2 = 0
     end
     return self.sl:get_rank_range(r1, r2)
 end
