@@ -39,7 +39,7 @@ function mt:limit(count, delete_handler)
 
     local delete_function = function(member)
         self.tbl[member] = nil
-        if not delete_handler then
+        if delete_handler then
             delete_handler(member)
         end
     end
@@ -57,7 +57,7 @@ function mt:rev_limit(count, delete_handler)
 
     local delete_function = function(member)
         self.tbl[member] = nil
-        if not delete_handler then
+        if delete_handler then
             delete_handler(member)
         end
     end
