@@ -66,8 +66,8 @@ function mt:rev_limit(count, delete_handler)
 end
 
 function mt:rev_range(r1, r2)
-    local r1 = self:_reverse_rank(r1)
-    local r2 = self:_reverse_rank(r2)
+    r1 = self:_reverse_rank(r1)
+    r2 = self:_reverse_rank(r2)
     return self:range(r1, r2)
 end
 
@@ -104,6 +104,17 @@ end
 
 function mt:score(member)
     return self.tbl[member]
+end
+
+function mt:member_by_rank(r)
+    return self.sl:get_member_by_rank(r)
+end
+
+function mt:member_by_rev_rank(r)
+    r = self:_reverse_rank(r)
+    if r > 0 then
+        return self.sl:get_member_by_rank(r)
+    end
 end
 
 function mt:dump()

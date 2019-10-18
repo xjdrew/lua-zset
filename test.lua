@@ -52,3 +52,13 @@ zs:dump()
 print("------------------ dump after rev limit 5 ------------------")
 zs:rev_limit(5)
 zs:dump()
+
+print("------------------ member_by_rank ------------------")
+for rank = 1, 10 do
+    print("rank", rank, zs:member_by_rank(rank))
+end
+
+print("------------------ member_by_rev_rank ------------------")
+for rank = 1, 10 do
+    print("rank", rank, zs:member_by_rev_rank(rank))
+end
