@@ -153,6 +153,18 @@ _get_score_range(lua_State *L) {
 }
 
 static int
+_get_member_by_rank(lua_State *L){
+    skiplist *sl = _to_skiplist(L);
+    unsigned long r = luaL_checkinteger(L, 2);
+    skiplistNode *node = slGetNodeByRank(sl, r);
+    if (node) {
+        lua_pushlstring(L, node->obj->ptr, node->obj->length);
+        return 1;
+    }
+    return 0;
+}
+
+static int
 _dump(lua_State *L) {
     skiplist *sl = _to_skiplist(L);
     slDump(sl);
@@ -190,6 +202,7 @@ int luaopen_skiplist_c(lua_State *L) {
         {"get_rank", _get_rank},
         {"get_rank_range", _get_rank_range},
         {"get_score_range", _get_score_range},
+        {"get_member_by_rank", _get_member_by_rank},
 
         {"dump", _dump},
         {NULL, NULL}
