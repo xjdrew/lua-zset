@@ -191,7 +191,9 @@ _release(lua_State *L) {
 }
 
 int luaopen_skiplist_c(lua_State *L) {
+#if defined(LUA_VERSION_NUM) && LUA_VERSION_NUM > 501
     luaL_checkversion(L);
+#endif
 
     luaL_Reg l[] = {
         {"insert", _insert},
