@@ -2,7 +2,7 @@ all: skiplist.so
 
 CC = gcc
 CFLAGS = -g3 -O0 -Wall -fPIC --shared
-LUA_INCLUDE_DIR = /usr/local/include
+LUA_INCLUDE_DIR ?= /usr/local/include
 DEFS = -DLUA_COMPAT_5_2
 
 luajit: LUA_INCLUDE_DIR = /usr/local/include/luajit-2.1
