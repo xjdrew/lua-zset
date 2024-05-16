@@ -23,6 +23,16 @@ function mt:rem(member)
     end
 end
 
+function mt:rem_range_by_score(min, max, delete_handler)
+    local delete_function = function(member)
+        self.tbl[member] = nil
+        if delete_handler then
+            delete_handler(member)
+        end
+    end
+    return self.sl:delete_by_score(min, max, delete_function)
+end
+
 function mt:count()
     return self.sl:get_count()
 end

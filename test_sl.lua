@@ -53,7 +53,6 @@ local r1, r2 = 2, 5
 dump_rank_range(sl, r1, r2)
 dump_rank_range(sl, r2, r1)
 
-local s1, s2 = 10, 20
 local function dump_score_range(sl, s1, s2)
     print("score range:", s1, s2)
     local t = sl:get_score_range(s1, s2)
@@ -62,16 +61,18 @@ local function dump_score_range(sl, s1, s2)
     end
 end
 
-dump_score_range(sl, 10, 15)
-dump_score_range(sl, 15, 10)
+local s1, s2 = 10, 20
+dump_score_range(sl, s1, s2)
+dump_score_range(sl, s2, s1)
 
-function delete_cb(member)
+local function delete_cb(member)
     print("delete:", member)
 end
 sl:delete_by_rank(15, 10, delete_cb)
+sl:delete_by_score(100, 105, delete_cb)
 
-print(collectgarbage("count"))
+print("before gc:", collectgarbage("count"))
 sl = nil
 collectgarbage("collect")
-print(collectgarbage("count"))
+print("after gc:", collectgarbage("count"))
 

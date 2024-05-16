@@ -35,6 +35,7 @@ void slDump(skiplist *sl);
 
 void slInsert(skiplist *sl, double score, slobj *obj);
 int slDelete(skiplist *sl, double score, slobj *obj);
+unsigned long slDeleteByScore(skiplist *sl, double min, double max, slDeleteCb cb, void* ud);
 unsigned long slDeleteByRank(skiplist *sl, unsigned int start, unsigned int end, slDeleteCb cb, void* ud);
 
 unsigned long slGetRank(skiplist *sl, double score, slobj *o);

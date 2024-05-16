@@ -190,6 +190,35 @@ int slDelete(skiplist *sl, double score, slobj *obj) {
     return 0; /* not found */
 }
 
+/* Delete all the elements with score between min and max from the skiplist.
+ * Both min and max are inclusive. */
+unsigned long slDeleteByScore(skiplist *sl, double min, double max, slDeleteCb cb, void* ud) {
+    skiplistNode *update[SKIPLIST_MAXLEVEL], *x;
+    unsigned long removed = 0;
+    int i;
+
+    x = sl->header;
+    for (i = sl->level-1; i >= 0; i--) {
+        while (x->level[i].forward && x->level[i].forward->score < min)
+            x = x->level[i].forward;
+        update[i] = x;
+    }
+
+    /* Current node is the last with score < min. */
+    x = x->level[0].forward;
+
+    /* Delete nodes while in range. */
+    while (x && x->score <= max) {
+        skiplistNode *next = x->level[0].forward;
+        slDeleteNode(sl,x,update);
+        cb(ud, x->obj);
+        slFreeNode(x); /* Here is where x->ele is actually released. */
+        removed++;
+        x = next;
+    }
+    return removed;
+}
+
 /* Delete all the elements with rank between start and end from the skiplist.
  * Start and end are inclusive. Note that start and end need to be 1-based */
 unsigned long slDeleteByRank(skiplist *sl, unsigned int start, unsigned int end, slDeleteCb cb, void* ud) {
