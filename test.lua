@@ -14,7 +14,11 @@ local function random_choose(t)
     return table.remove(t, i)
 end
 
-local zs = zset.new()
+local function delete_handler(member)
+	print("delete", member)
+end
+
+local zs = zset.new(delete_handler)
 
 while true do
     local score = random_choose(all)

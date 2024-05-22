@@ -23,14 +23,8 @@ function mt:rem(member)
     end
 end
 
-function mt:rem_range_by_score(min, max, delete_handler)
-    local delete_function = function(member)
-        self.tbl[member] = nil
-        if delete_handler then
-            delete_handler(member)
-        end
-    end
-    return self.sl:delete_by_score(min, max, delete_function)
+function mt:rem_range_by_score(min, max)
+    return self.sl:delete_by_score(min, max, self.delete_function)
 end
 
 function mt:count()
@@ -41,38 +35,22 @@ function mt:_reverse_rank(r)
     return self.sl:get_count() - r + 1
 end
 
-function mt:limit(count, delete_handler)
+function mt:limit(count)
     local total = self.sl:get_count()
     if total <= count then
         return 0
     end
-
-    local delete_function = function(member)
-        self.tbl[member] = nil
-        if delete_handler then
-            delete_handler(member)
-        end
-    end
-
-    return self.sl:delete_by_rank(count+1, total, delete_function)
+    return self.sl:delete_by_rank(count+1, total, self.delete_function)
 end
 
-function mt:rev_limit(count, delete_handler)
+function mt:rev_limit(count)
     local total = self.sl:get_count()
     if total <= count then
         return 0
     end
     local from = self:_reverse_rank(count+1)
     local to   = self:_reverse_rank(total)
-
-    local delete_function = function(member)
-        self.tbl[member] = nil
-        if delete_handler then
-            delete_handler(member)
-        end
-    end
-
-    return self.sl:delete_by_rank(from, to, delete_function)
+    return self.sl:delete_by_rank(from, to, self.delete_function)
 end
 
 function mt:rev_range(r1, r2)
@@ -132,10 +110,16 @@ function mt:dump()
 end
 
 local M = {}
-function M.new()
+function M.new(delete_handler)
     local obj = {}
     obj.sl = skiplist()
     obj.tbl = {}
+    obj.delete_function = function(member)
+        obj.tbl[member] = nil
+        if delete_handler then
+            delete_handler(member)
+        end
+    end
     return setmetatable(obj, mt)
 end
 return M
