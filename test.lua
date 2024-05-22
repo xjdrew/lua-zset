@@ -15,10 +15,12 @@ local function random_choose(t)
 end
 
 local function delete_handler(member)
-	print("delete", member)
+    print("delete", member)
 end
 
-local zs = zset.new(delete_handler)
+local zs = zset.new {
+    delete_handler = delete_handler,
+}
 
 while true do
     local score = random_choose(all)
