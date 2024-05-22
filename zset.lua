@@ -110,17 +110,26 @@ function mt:dump()
 end
 
 local M = {}
-function M.new(delete_handler)
+
+---@class zset.options
+---@field delete_handler fun(member:string)
+
+--- Create a new zset
+---@param options zset.options
+function M.new(options)
     local obj = {}
     obj.sl = skiplist()
     obj.tbl = {}
+
+    local delete_handler = options and options.delete_handler
     obj.delete_function = function(member)
         obj.tbl[member] = nil
         if delete_handler then
             delete_handler(member)
         end
     end
+
     return setmetatable(obj, mt)
 end
-return M
 
+return M
