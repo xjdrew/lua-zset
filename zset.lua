@@ -2,7 +2,7 @@ local skiplist = require "skiplist.c"
 local mt = {}
 mt.__index = mt
 
-function mt:add(score, member)
+function mt:add(score, member, ts)
     local old = self.tbl[member]
     if old then
         if old == score then
@@ -11,15 +11,17 @@ function mt:add(score, member)
         self.sl:delete(old, member)
     end
 
-    self.sl:insert(score, member)
+    self.sl:insert(score, member, ts)
     self.tbl[member] = score
+    self.ts[member] = ts
 end
 
 function mt:rem(member)
     local score = self.tbl[member]
     if score then
-        self.sl:delete(score, member)
+        self.sl:delete(score, member, self.ts[member])
         self.tbl[member] = nil
+        self.ts[member] = nil
     end
 end
 
@@ -83,7 +85,7 @@ function mt:rank(member)
     if not score then
         return nil
     end
-    return self.sl:get_rank(score, member)
+    return self.sl:get_rank(score, member, self.ts[member])
 end
 
 function mt:range_by_score(s1, s2)
@@ -114,6 +116,7 @@ function M.new(delete_handler)
     local obj = {}
     obj.sl = skiplist()
     obj.tbl = {}
+    obj.ts = {}
     obj.delete_function = function(member)
         obj.tbl[member] = nil
         if delete_handler then

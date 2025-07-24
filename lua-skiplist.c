@@ -27,7 +27,11 @@ _insert(lua_State *L) {
     size_t len;
     const char* ptr = lua_tolstring(L, 3, &len);
     slobj *obj = slCreateObj(ptr, len);
-    slInsert(sl, score, obj);
+    double timestamp = 0;
+    if (lua_gettop(L) >= 4) {
+        timestamp = lua_tonumber(L, -1);
+    }
+    slInsert(sl, score, obj, timestamp);
     return 0;
 }
 
@@ -38,7 +42,11 @@ _delete(lua_State *L) {
     luaL_checktype(L, 3, LUA_TSTRING);
     slobj obj;
     obj.ptr = (char *)lua_tolstring(L, 3, &obj.length);
-    lua_pushboolean(L, slDelete(sl, score, &obj));
+    double timestamp = 0;
+    if (lua_gettop(L) >= 4) {
+        timestamp = lua_tonumber(L, -1);
+    }
+    lua_pushboolean(L, slDelete(sl, score, &obj, timestamp));
     return 1;
 }
 
@@ -96,8 +104,12 @@ _get_rank(lua_State *L) {
     luaL_checktype(L, 3, LUA_TSTRING);
     slobj obj;
     obj.ptr = (char *)lua_tolstring(L, 3, &obj.length);
+    double timestamp = 0;
+    if (lua_gettop(L) >= 4) {
+        timestamp = lua_tonumber(L, -1);
+    }
 
-    unsigned long rank = slGetRank(sl, score, &obj);
+    unsigned long rank = slGetRank(sl, score, &obj, timestamp);
     if(rank == 0) {
         return 0;
     }
