@@ -90,9 +90,10 @@ int equalslObj(slobj *a, slobj *b) {
 }
 
 int compare(skiplistNode *node, double score, slobj *obj, double timestamp) {
-    return node->score < score || (node->score == score &&
-                (node->timestamp > timestamp ||
-                    (node->timestamp == timestamp && compareslObj(node->obj,obj) < 0)));
+    int cmp = score != node->score ? node->score - score : node->timestamp - timestamp;
+    if (cmp != 0) return cmp;
+
+    return compareslObj(node->obj,obj);
 }
 
 void slInsert(skiplist *sl, double score, slobj *obj, double timestamp) {
@@ -104,7 +105,7 @@ void slInsert(skiplist *sl, double score, slobj *obj, double timestamp) {
     for (i = sl->level-1; i >= 0; i--) {
         /* store rank that is crossed to reach the insert position */
         rank[i] = i == (sl->level-1) ? 0 : rank[i+1];
-        while (x->level[i].forward && compare(x->level[i].forward, score, obj, timestamp)) {
+        while (x->level[i].forward && compare(x->level[i].forward, score, obj, timestamp) < 0) {
             rank[i] += x->level[i].span;
             x = x->level[i].forward;
         }
@@ -174,7 +175,7 @@ int slDelete(skiplist *sl, double score, slobj *obj, double timestamp) {
 
     x = sl->header;
     for (i = sl->level-1; i >= 0; i--) {
-        while (x->level[i].forward && compare(x->level[i].forward, score, obj, timestamp))
+        while (x->level[i].forward && compare(x->level[i].forward, score, obj, timestamp) < 0)
             x = x->level[i].forward;
         update[i] = x;
     }
@@ -261,7 +262,7 @@ unsigned long slGetRank(skiplist *sl, double score, slobj *o, double timestamp) 
 
     x = sl->header;
     for (i = sl->level-1; i >= 0; i--) {
-        while (x->level[i].forward && compare(x->level[i].forward, score, o, timestamp)) {
+        while (x->level[i].forward && compare(x->level[i].forward, score, o, timestamp) < 0) {
             rank += x->level[i].span;
             x = x->level[i].forward;
         }
@@ -369,7 +370,7 @@ void slDump(skiplist *sl) {
     while(x->level[0].forward) {
         x = x->level[0].forward;
         i++;
-        printf("node %d: score:%f, member:%s\n", i, x->score, x->obj->ptr);
+        printf("node %d: score:%f, member:%s ts:%f\n", i, x->score, x->obj->ptr, x->timestamp);
     }
 }
 
