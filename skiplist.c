@@ -262,7 +262,7 @@ unsigned long slGetRank(skiplist *sl, double score, slobj *o, double timestamp) 
 
     x = sl->header;
     for (i = sl->level-1; i >= 0; i--) {
-        while (x->level[i].forward && compare(x->level[i].forward, score, o, timestamp) < 0) {
+        while (x->level[i].forward && compare(x->level[i].forward, score, o, timestamp) <= 0) {
             rank += x->level[i].span;
             x = x->level[i].forward;
         }
