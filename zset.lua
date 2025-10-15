@@ -8,7 +8,7 @@ function mt:add(score, member, ts)
         if old == score then
             return
         end
-        self.sl:delete(old, member)
+        self.sl:delete(old, member, self.ts[member])
     end
 
     self.sl:insert(score, member, ts)
@@ -119,6 +119,7 @@ function M.new(delete_handler)
     obj.ts = {}
     obj.delete_function = function(member)
         obj.tbl[member] = nil
+        obj.ts[member] = nil
         if delete_handler then
             delete_handler(member)
         end
