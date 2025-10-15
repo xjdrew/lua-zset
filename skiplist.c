@@ -90,7 +90,7 @@ int equalslObj(slobj *a, slobj *b) {
 }
 
 int compare(skiplistNode *node, double score, slobj *obj, double timestamp) {
-    int cmp = score != node->score ? node->score - score : node->timestamp - timestamp;
+    int cmp = score != node->score ? node->score - score : timestamp - node->timestamp;
     if (cmp != 0) return cmp;
 
     return compareslObj(node->obj,obj);
